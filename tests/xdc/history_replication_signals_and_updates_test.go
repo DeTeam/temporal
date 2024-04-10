@@ -287,7 +287,7 @@ func (s *historyReplicationConflictTestSuite) testConflictResolutionReappliesUpd
 	2 WorkflowTaskScheduled
 	3 WorkflowTaskStarted
 	4 WorkflowTaskCompleted
-	5 WorkflowExecutionUpdateAccepted {"AcceptedRequest": {"Input": {"Args": {"Payloads": [{"Data": "\"cluster1-update-input\""}]}}}}
+	5 WorkflowExecutionUpdateAccepted {"ProtocolInstanceId": "cluster1-update", "AcceptedRequest": {"Input": {"Args": {"Payloads": [{"Data": "\"cluster1-update-input\""}]}}}}
 	`, []int{1, 1, 1, 1, 1}, s.getHistory(ctx, s.cluster1, runId))
 
 	// cluster2 has also accepted an update (events have failover version 2 since they are endogenous to cluster 2)
@@ -296,7 +296,7 @@ func (s *historyReplicationConflictTestSuite) testConflictResolutionReappliesUpd
 	2 WorkflowTaskScheduled
 	3 WorkflowTaskStarted
 	4 WorkflowTaskCompleted
-	5 WorkflowExecutionUpdateAccepted {"AcceptedRequest": {"Input": {"Args": {"Payloads": [{"Data": "\"cluster2-update-input\""}]}}}}
+	5 WorkflowExecutionUpdateAccepted {"ProtocolInstanceId": "cluster2-update", "AcceptedRequest": {"Input": {"Args": {"Payloads": [{"Data": "\"cluster2-update-input\""}]}}}}
 	`, []int{1, 1, 2, 2, 2}, s.getHistory(ctx, s.cluster2, runId))
 
 	// Execute pending history replication tasks. Both clusters believe they are active, therefore each cluster sends
@@ -310,7 +310,7 @@ func (s *historyReplicationConflictTestSuite) testConflictResolutionReappliesUpd
 	2 WorkflowTaskScheduled
 	3 WorkflowTaskStarted
 	4 WorkflowTaskCompleted
-	5 WorkflowExecutionUpdateAccepted {"AcceptedRequest": {"Input": {"Args": {"Payloads": [{"Data": "\"cluster2-update-input\""}]}}}}
+	5 WorkflowExecutionUpdateAccepted {"ProtocolInstanceId": "cluster2-update", "AcceptedRequest": {"Input": {"Args": {"Payloads": [{"Data": "\"cluster2-update-input\""}]}}}}
 	`, []int{1, 1, 2, 2, 2}, s.getHistory(ctx, s.cluster1, runId))
 
 	// cluster2 has reapplied the accepted update from cluster 1 on top of its own update, changing it from state
@@ -320,8 +320,8 @@ func (s *historyReplicationConflictTestSuite) testConflictResolutionReappliesUpd
 	2 WorkflowTaskScheduled
 	3 WorkflowTaskStarted
 	4 WorkflowTaskCompleted
-	5 WorkflowExecutionUpdateAccepted {"AcceptedRequest": {"Input": {"Args": {"Payloads": [{"Data": "\"cluster2-update-input\""}]}}}}
-	6 WorkflowExecutionUpdateAdmitted {"Request": {"Input": {"Args": {"Payloads": [{"Data": "\"cluster1-update-input\""}]}}}}
+	5 WorkflowExecutionUpdateAccepted {"ProtocolInstanceId": "cluster2-update", "AcceptedRequest": {"Input": {"Args": {"Payloads": [{"Data": "\"cluster2-update-input\""}]}}}}
+	6 WorkflowExecutionUpdateAdmitted {"Request": {"Meta": {"UpdateId": "cluster1-update"}, "Input": {"Args": {"Payloads": [{"Data": "\"cluster1-update-input\""}]}}}}
 	7 WorkflowTaskScheduled
 	`, []int{1, 1, 2, 2, 2, 2, 2}, s.getHistory(ctx, s.cluster2, runId))
 
@@ -338,8 +338,8 @@ func (s *historyReplicationConflictTestSuite) testConflictResolutionReappliesUpd
 	2 WorkflowTaskScheduled
 	3 WorkflowTaskStarted
 	4 WorkflowTaskCompleted
-	5 WorkflowExecutionUpdateAccepted {"AcceptedRequest": {"Input": {"Args": {"Payloads": [{"Data": "\"cluster2-update-input\""}]}}}}
-	6 WorkflowExecutionUpdateAdmitted {"Request": {"Input": {"Args": {"Payloads": [{"Data": "\"cluster1-update-input\""}]}}}}
+	5 WorkflowExecutionUpdateAccepted {"ProtocolInstanceId": "cluster2-update", "AcceptedRequest": {"Input": {"Args": {"Payloads": [{"Data": "\"cluster2-update-input\""}]}}}}
+	6 WorkflowExecutionUpdateAdmitted {"Request": {"Meta": {"UpdateId": "cluster1-update"}, "Input": {"Args": {"Payloads": [{"Data": "\"cluster1-update-input\""}]}}}}
 	7 WorkflowTaskScheduled
 	8 WorkflowTaskStarted
 	9 WorkflowTaskCompleted
