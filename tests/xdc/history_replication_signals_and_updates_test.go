@@ -265,6 +265,11 @@ func (s *historyReplicationConflictTestSuite) TestConflictResolutionReappliesUpd
 	s.testConflictResolutionReappliesUpdatesHelper("cluster1-update-id", "cluster2-update-id")
 }
 
+func (s *historyReplicationConflictTestSuite) TestConflictResolutionReappliesUpdatesSameIds() {
+	s.T().SkipNow() // TODO (dan) decide how we want to handle conflicting update IDs.
+	s.testConflictResolutionReappliesUpdatesHelper("update-id", "update-id")
+}
+
 func (s *historyReplicationConflictTestSuite) testConflictResolutionReappliesUpdatesHelper(cluster1UpdateId, cluster2UpdateId string) {
 	s.tv = testvars.New(s.T().Name())
 	ctx := context.Background()
