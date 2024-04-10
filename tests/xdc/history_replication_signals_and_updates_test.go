@@ -261,6 +261,10 @@ func (s *historyReplicationConflictTestSuite) TestConflictResolutionReappliesSig
 // Both clusters then accept an update and write it to their own history, and the test confirms that the update is
 // reapplied during the resulting conflict resolution process.
 func (s *historyReplicationConflictTestSuite) TestConflictResolutionReappliesUpdates() {
+	s.testConflictResolutionReappliesUpdatesHelper("cluster1-update", "cluster2-update")
+}
+
+func (s *historyReplicationConflictTestSuite) testConflictResolutionReappliesUpdatesHelper(cluster1UpdateId, cluster2UpdateId string) {
 	s.tv = testvars.New(s.T().Name())
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, testTimeout)
@@ -274,8 +278,8 @@ func (s *historyReplicationConflictTestSuite) TestConflictResolutionReappliesUpd
 	// Both clusters now believe they are active and hence both will accept an update.
 
 	// Send updates
-	s.sendUpdateAndWaitUntilAccepted(ctx, runId, "cluster1-update", "cluster1-update-input", sdkClient1, s.cluster1)
-	s.sendUpdateAndWaitUntilAccepted(ctx, runId, "cluster2-update", "cluster2-update-input", sdkClient2, s.cluster2)
+	s.sendUpdateAndWaitUntilAccepted(ctx, runId, cluster1UpdateId, "cluster1-update-input", sdkClient1, s.cluster1)
+	s.sendUpdateAndWaitUntilAccepted(ctx, runId, cluster2UpdateId, "cluster2-update-input", sdkClient2, s.cluster2)
 
 	// cluster1 has accepted an update
 	s.HistoryRequire.EqualHistoryEventsAndVersions(`
