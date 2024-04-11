@@ -2222,6 +2222,20 @@ func (mr *MockMutableStateMockRecorder) GetTransientWorkflowTaskInfo(workflowTas
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransientWorkflowTaskInfo", reflect.TypeOf((*MockMutableState)(nil).GetTransientWorkflowTaskInfo), workflowTask, identity)
 }
 
+// GetUpdate mocks base method.
+func (m *MockMutableState) GetUpdate(updateID string) *v113.UpdateInfo {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUpdate", updateID)
+	ret0, _ := ret[0].(*v113.UpdateInfo)
+	return ret0
+}
+
+// GetUpdate indicates an expected call of GetUpdate.
+func (mr *MockMutableStateMockRecorder) GetUpdate(updateID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUpdate", reflect.TypeOf((*MockMutableState)(nil).GetUpdate), updateID)
+}
+
 // GetUpdateCondition mocks base method.
 func (m *MockMutableState) GetUpdateCondition() (int64, int64) {
 	m.ctrl.T.Helper()

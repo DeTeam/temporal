@@ -860,6 +860,10 @@ func (ms *MutableStateImpl) VisitUpdates(visitor func(updID string, updInfo *upd
 	}
 }
 
+func (ms *MutableStateImpl) GetUpdate(updateID string) *updatespb.UpdateInfo {
+	return ms.executionInfo.UpdateInfos[updateID]
+}
+
 func (ms *MutableStateImpl) GetUpdateOutcome(
 	ctx context.Context,
 	updateID string,
