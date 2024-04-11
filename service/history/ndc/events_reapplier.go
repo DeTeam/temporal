@@ -28,6 +28,7 @@ package ndc
 
 import (
 	"context"
+	"fmt"
 
 	enumspb "go.temporal.io/api/enums/v1"
 	historypb "go.temporal.io/api/history/v1"
@@ -85,6 +86,12 @@ func (r *EventsReapplierImpl) ReapplyEvents(
 			reappliedEvents = append(reappliedEvents, event)
 		case enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_UPDATE_ADMITTED:
 			// Test coverage: TestNDCEventReapplicationSuite/TestReapplyEvents_AppliedEvent_Update
+			attr := event.GetWorkflowExecutionUpdateAdmittedEventAttributes()
+			updateID := attr.Request.Meta.UpdateId
+			if ms.GetUpdate(updateID) != nil {
+				r.logger.Warn(fmt.Sprintf("not reapplying Update %s because it already exists", updateID))
+				continue
+			}
 			dedupResource := definition.NewEventReappliedID(runID, event.GetEventId(), event.GetVersion())
 			if ms.IsResourceDuplicated(dedupResource) {
 				continue
@@ -92,6 +99,11 @@ func (r *EventsReapplierImpl) ReapplyEvents(
 			reappliedEvents = append(reappliedEvents, event)
 		case enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_UPDATE_ACCEPTED:
 			attr := event.GetWorkflowExecutionUpdateAcceptedEventAttributes()
+			updateID := attr.ProtocolInstanceId
+			if ms.GetUpdate(updateID) != nil {
+				r.logger.Warn(fmt.Sprintf("not reapplying Update %s because it already exists", updateID))
+				continue
+			}
 			request := attr.GetAcceptedRequest()
 			if request == nil {
 				// An UpdateAccepted event lacks a request payload if and only if it is preceded by an UpdateAdmitted
