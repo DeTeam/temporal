@@ -937,6 +937,8 @@ func (c *ContextImpl) UpdateRegistry(ctx context.Context, ms MutableState) updat
 				},
 			),
 		)
+	} else {
+		c.updateRegistry.UpdateFromStore()
 	}
 	return c.updateRegistry
 }
